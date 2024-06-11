@@ -30,21 +30,21 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.conv1 = nn.Conv2d(in_channels=channel, out_channels=32, kernel_size=16, stride=4, padding=0)
+        self.conv1 = nn.Conv2d(in_channels=channel, out_channels=32, kernel_size=12, stride=4, padding=0)
         self.bacthnorm1 = nn.BatchNorm2d(32)
-        self.pool1 = nn.MaxPool2d(5, 3)
+        self.pool1 = nn.MaxPool2d(6, 3)
         self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=15, stride=10, padding=0)
         self.bacthnorm2 = nn.BatchNorm2d(64)
-        self.pool2 = nn.MaxPool2d(2, 2)
-        self.linear = nn.Linear(1536, 3)
+        self.pool2 = nn.MaxPool2d(4,2)
+        self.linear = nn.Linear(896, 3)
         self.dropout1d = nn.Dropout(p=0.1)
     def forward(self, x):  # x:3*800*2000
-        x1 = self.bacthnorm1(self.conv1(x))  # 32x197*497
-        x2 = self.pool1(F.relu(x1))  # x2:32*65*165
+        x1 = self.bacthnorm1(self.conv1(x))  # 32x498*198
+        x2 = self.pool1(F.relu(x1))  # x2:32*165*65
 
-        x3 = self.bacthnorm2(self.conv2(x2))  # x3:64*6*16
-        x4 = self.pool2(F.relu(x3))  # x4:64*3*8
-        x5 = x4.view(x4.size(0), -1)#1536*1
+        x3 = self.bacthnorm2(self.conv2(x2))  # x3:64*16*6
+        x4 = self.pool2(F.relu(x3))  # x4:64*7*2
+        x5 = x4.view(x4.size(0), -1)#896*1
         x6 = self.linear(x5)#1X3
         x7 = self.dropout1d(x6)
         return x7
@@ -64,7 +64,7 @@ def build_network(train_loader,val_loader,epochs,pre_trained_net=None):
     # 使用交叉熵损失函数
     criterion = nn.CrossEntropyLoss()
     # 使用带有动量的随机梯度下降
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.005, momentum=0.5)#0.01
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.0001, momentum=0.9)#0.01
     #Lr = 0.001
     #optimizer = optim.Adam(net.parameters(), lr=Lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=0)
 

@@ -21,29 +21,28 @@ def merge_datasets(dataset, sub_dataset):
     # 合并 targets
     dataset.targets.extend(sub_dataset.targets)
     return dataset
-
 def data_prcoess(img_path,batch_size):
-
-    data_path = img_path  # 'D:\Apps\CNN_project\data'
+    data_path = img_path#'D:\Apps\CNN_project\data'
 
     transform_aug = transforms.Compose([
         transforms.RandomHorizontalFlip(p=1),
         transforms.RandomRotation([180, 180]),
         transforms.ToTensor(),  # 将图片转换为Tensor,归一化至[0,1]
-        # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
+        #transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
     ])
 
     data_aug = torchvision.datasets.ImageFolder(root=data_path,
                                                 transform=transform_aug)
     transform_orig = transforms.Compose([
         transforms.ToTensor(),  # 将图片转换为Tensor,归一化至[0,1]
-        # transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
+        #transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False)
     ])
 
     data_ori = torchvision.datasets.ImageFolder(root=data_path,
                                                 transform=transform_orig)
 
     full_data = merge_datasets(data_ori, data_aug)
+
 
     train_size = int(len(full_data) * 0.8)  # 这里train_size是一个长度矢量，并非是比例，我们将训练和测试进行8/2划分
     test_size = int(len(full_data) * 0.1)
@@ -54,9 +53,7 @@ def data_prcoess(img_path,batch_size):
     train_loader = DataLoader(train_dataset, batch_size=batch_size, num_workers=0, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=batch_size, num_workers=0, shuffle=False)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=0, shuffle=False)
-    return train_loader, test_loader, val_loader
-
-
+    return train_loader,test_loader,val_loader
 
 
 
